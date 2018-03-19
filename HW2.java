@@ -21,6 +21,8 @@ public class HW2 {
 	 * 1      2		 acba2
 	 * 0      3		 acba23
 	 */
+	
+	
 	static String reverseString(String str) {
 		StringBuilder sb = new StringBuilder();
 		for(int i = str.length()-1; i >= 0; i--) {
@@ -69,6 +71,22 @@ public class HW2 {
         return hmap;
     }
 	
+	
+	@SuppressWarnings("unchecked")
+	static ArrayList<Interval> mergeIntervals(ArrayList<Interval> intervals) {
+		Collections.sort(intervals);
+		ArrayList<Interval> result = new ArrayList<Interval>();
+		result.add(intervals.get(0));
+		for(int i = 1; i < intervals.size(); i++) {
+			Interval curEnd = result.get(result.size()-1);
+			if(curEnd.getEnd() < intervals.get(i).getStart()) {
+				result.add(intervals.get(i));
+			} else {
+				curEnd.setEnd(Math.max(curEnd.getEnd(), intervals.get(i).getEnd()));
+			}
+		}
+		return result;
+	}
 	/**
 	 * 
 	 * @param nums: an unsorted array
@@ -169,31 +187,75 @@ public class HW2 {
 		nums[0] = nums[0] - nums[1];
 	}
 	
+	static void permutationHelper(StringBuilder str, boolean[] visited, ArrayList<String> result, String constStr) {
+		if(str.length() == constStr.length()) {
+			result.add(str.toString());
+			System.out.println(str.toString());
+			return;
+		} // abcc 
+		// cacb
+		for(int i = 0; i < constStr.length(); i++) {
+			if(i > 0 && constStr.charAt(i-1)== constStr.charAt(i) && visited[i-1] == false) continue;
+			if(visited[i]==false) {
+				str.append(constStr.charAt(i));
+				visited[i] = true;
+				permutationHelper(str, visited, result, constStr);
+				str.deleteCharAt(str.length()-1);
+				visited[i] = false;
+			}
+		}
+	}
+	
+	static ArrayList<String> getPermutation(String str){
+		char[] tmpArray = str.toCharArray();
+		Arrays.sort(tmpArray);
+		String str2 = new String(tmpArray);
+		ArrayList<String> result = new ArrayList<String>();
+		StringBuilder sb = new StringBuilder();
+		boolean[] visited = new boolean[str.length()];
+		permutationHelper(sb, visited, result, str2);
+		return result;
+	}
 	
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
-		int[] nums = new int[2];
-		int[] nums2 = new int[] {-2, -3, 0, 1, 4, 5, -3, 6};
-		nums[0] = 9;
-		nums[1] = 4;
+//		int[] nums = new int[2];
+//		int[] nums2 = new int[] {-2, -3, 0, 1, 4, 5, -3, 6};
+//		nums[0] = 9;
+//		nums[1] = 4;
+//		
+//		HW2.swapWithoutThird(nums);
+//		
+//		List<List<Integer>> triplets = HW2.findTriplets(nums2);
+//		System.out.println();
+//		for(List<Integer> list : triplets) {
+//			for(Integer i : list) {
+//				System.out.print(i.intValue() + " ");
+//			}
+//			System.out.println();
+//		}
+//		
+//		Map<Character, Integer> hmap = HW2.countChars("wo cao ni ma ma he ni ba ba");
+//		//Iterator itmap = hmap.entrySet().iterator();
+//		for(Map.Entry<Character, Integer> pair : hmap.entrySet()) {
+//			System.out.println(pair.getKey().toString() + ": " + pair.getValue().intValue());
+//		}
+		ArrayList<Interval> arrayIntervals = new ArrayList<Interval>();
+		arrayIntervals.add(new Interval(3, 4));
+		arrayIntervals.add(new Interval(1, 4));
+		arrayIntervals.add(new Interval(5, 8));
+		arrayIntervals.add(new Interval(2, 7));
+		//Collections.sort(arrayIntervals);
 		
-		HW2.swapWithoutThird(nums);
 		
-		List<List<Integer>> triplets = HW2.findTriplets(nums2);
-		System.out.println();
-		for(List<Integer> list : triplets) {
-			for(Integer i : list) {
-				System.out.print(i.intValue() + " ");
-			}
-			System.out.println();
+		ArrayList<Interval> res = HW2.mergeIntervals(arrayIntervals);
+		for(Interval e : res) {
+			System.out.println(e.getStart() + "; " + e.getEnd());
 		}
+		String s = "abac";
+		ArrayList<String> result = HW2.getPermutation(s);
 		
-		Map<Character, Integer> hmap = HW2.countChars("wo cao ni ma ma he ni ba ba");
-		//Iterator itmap = hmap.entrySet().iterator();
-		for(Map.Entry<Character, Integer> pair : hmap.entrySet()) {
-			System.out.println(pair.getKey().toString() + ": " + pair.getValue().intValue());
-		}
-}
+	}
 }
 
 
